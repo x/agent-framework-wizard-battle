@@ -1,9 +1,5 @@
 # Chapter 5: Feats
 
-
-The Weathermay-Foxgrove Twins, Gennifer and Laurie, along with the investigators  
-Alanik Ray and Arthur Sedgwick, fight to escape the horrors of Castle Ravenloft
-
 This chapter offers a collection of feats, which are special features not tied to a character class. A feat represents a talent or an area of expertise that gives a character special capabilities. It embodies training, experience, and abilities beyond what a class provides.
 
 The sections below explain the parts of a feat and list a variety of feat options separated into categories.

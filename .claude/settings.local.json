@@ -1,29 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(cp:*)",
-      "Bash(uv run:*)",
-      "Bash(python3:*)",
-      "Bash(ls:*)",
-      "Bash(wc:*)",
-      "Bash(rm:*)",
-      "Bash(echo:*)",
-      "Bash(sed:*)",
-      "Bash(grep:*)"
-    ]
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/ruff-check.sh"
-          }
-        ]
-      }
+      "Bash(*)",
+      "Read(*)",
+      "Edit(*)",
+      "WebFetch(*)",
+      "WebSearch"
     ]
   }
 }

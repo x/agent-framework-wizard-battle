@@ -1,9 +1,5 @@
 # Chapter 3: Character Classes
 
-
-The heroes Mercion, Molliver, Strongheart, and Ringlerun  
-protect a portal to another plane from diabolical invaders
-
 Character class provides a character’s most exciting capabilities. This chapter offers twelve classes, each of which contains four subclasses—all summarized below.
 
 

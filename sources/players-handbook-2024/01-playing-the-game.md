@@ -1,9 +1,5 @@
 # Chapter 1: Playing the Game
 
-
-While adventuring in the Dragonlance setting, the siblings Caramon  
-Majere, Raistlin Majere, and Kitiara uth Matar provoke the rage of a wyvern
-
 Imagination is a key ingredient of Dungeons & Dragons, a cooperative game in which the characters that you roleplay embark on adventures together in fantasy worlds filled with monsters and magic.
 
 In D&D, the action takes place in the imaginations of the players, and it’s narrated by everyone together. Here’s a glimpse at what that looks like:
@@ -99,9 +95,6 @@ As with adventures, a DM might create a campaign from scratch, assemble a campai
 ## Dice
 
 Dice add randomness to the game. They help determine whether characters and monsters are successful at the things they attempt.
-
-
-From left to right: D4, D6, D8, D10 (ones digit), D10 (tens digit), D12, D20
 
 #### Round Down
 
@@ -216,7 +209,6 @@ When the outcome of an action is uncertain, the game uses a d20 roll to determin
 
 4.  **Compare the Total to a Target Number.** If the total of the d20 and its modifiers equals or exceeds the target number, the D20 Test succeeds. Otherwise, it fails. The Dungeon Master determines target numbers and tells players whether their rolls are successful. The target number for an ability check or a saving throw is called a Difficulty Class (DC). The target number for an attack roll is called an Armor Class (AC), which appears on a character sheet or in a stat block (see the rules glossary).
 
-
 A D20 Test can result in a dramatic success, a simple accomplishment, or a catastrophe
 
 ### Ability Checks
@@ -327,10 +319,6 @@ If you roll a 20 on the d20 (called a “natural 20”) for an attack roll, the 
 If you roll a 1 on the d20 (a “natural 1”) for an attack roll, the attack misses regardless of any modifiers or the target’s AC.
 
 ### Advantage/Disadvantage
-
-
-If you have Advantage, use the 18  
-If you have Disadvantage, use the 3
 
 Sometimes a D20 Test is modified by Advantage or Disadvantage. Advantage reflects the positive circumstances surrounding a d20 roll, while Disadvantage reflects negative circumstances.
 
@@ -495,9 +483,6 @@ This advice comes with one important caveat: avoid character choices that ruin t
 
 ## Social Interaction
 
-
-Characters lay on the charm while bartering for magic items with a green hag
-
 During their adventures, player characters meet many different people and face some monsters that would rather talk than fight. In those situations, it’s time for social interaction, which takes many forms. For example, you might try to convince a burglar to confess to wrongdoing or try to flatter a guard. The Dungeon Master assumes the roles of any nonplayer characters who are participating.
 
 An NPC’s attitude toward your character is Friendly, Indifferent, or Hostile, as defined in the rules glossary. Friendly NPCs are predisposed to help, and Hostile ones are inclined to hinder.
@@ -523,11 +508,6 @@ Ability checks can be key in determining the outcome of a social interaction. Yo
 Pay attention to your skill proficiencies when thinking of how you will interact with an NPC; use an approach that relies on your group’s skill proficiencies. For example, if the group needs to trick a guard into letting them into a castle, the Rogue who is proficient in Deception should lead the discussion.
 
 ### Social Interaction Example
-
-
-In this scene, players engage in a social interaction encounter. You and your group determine how similar scenes play out in your adventures.
-
-_Four adventurers—Shreeve, Mirabella, Auro, and Gareth—have traveled to the Blood on the Vine tavern in the grim village of Barovia._
 
 **Jared (as DM):** This tavern might have been finely appointed once, but it has grown shoddy with the passage of years. A blazing fire in the hearth barely gives any warmth to the room. You see a man behind the counter, methodically cleaning glasses. Three older women huddle together at one table. And a handsome young man sits by himself at a corner table, sipping a glass of wine. He looks up as you enter, but the other people ignore you. “Welcome to Barovia,” he says. He holds a coin toward the bartender: “A pitcher for the visitors.” The glint of silver catches the server’s attention.
 
@@ -632,7 +612,6 @@ As adventurers explore, their equipment can help them in many ways. For example,
 See chapter 6 for rules on many items that are useful on adventures. The items in that chapter’s “Tools” and “Adventuring Gear” sections are especially useful. The weapons in that chapter can also be used for more than battle; you could use a Quarterstaff, for example, to push a sinister-looking button that you’re reluctant to touch.
 
 ### Vision and Light
-
 
 Some adventuring tasks—such as noticing danger, hitting an enemy, and targeting certain spells—are affected by sight, so effects that obscure vision can hinder you, as explained below.
 
@@ -739,7 +718,6 @@ Travelers in wagons, carriages, or other land vehicles choose a pace as normal. 
 
 This scene finds the player characters investigating a mysterious and potentially dangerous location. They're moving through the environment and interacting with things they find there.
 
-
 _The characters are exploring Castle Ravenloft, and the DM describes the room the characters have entered._
 
 **Jared (as DM):** A blazing hearth fire fills this room with warm light. Firelight glints off a poker beside the fireplace, and the walls are lined with ancient books. A huge painting hangs above the mantelpiece in a gilded frame. The firelight illuminates the portrait—an exact likeness of Ireena Kolyana.
@@ -838,7 +816,6 @@ _The characters are exploring Castle Ravenloft, and the DM describes the room th
 
 ## Combat
 
-
 Adventurers encounter many dangerous monsters and nefarious villains. In those moments, combat often breaks out.
 
 ### The Order of Combat
@@ -887,9 +864,7 @@ Combat ends when one side or the other is defeated, which can mean the creatures
 
 ### Movement and Position
 
-
-Creatures occupy spaces of varying sizes. This Displacer Beast occupies  
-a 10-by-10-foot space, while the adventurers occupy 5-by-5-foot spaces
+Creatures occupy spaces of varying sizes. This Displacer Beast occupies a 10-by-10-foot space, while the adventurers occupy 5-by-5-foot spaces
 
 On your turn, you can move a distance equal to your Speed or less. Or you can decide not to move.
 
@@ -1013,10 +988,6 @@ Combatants watch for enemies to drop their guard. If you move heedlessly past yo
 **_Making an Opportunity Attack._** You can make an Opportunity Attack when a creature that you can see leaves your reach. To make the attack, take a Reaction to make one melee attack with a weapon or an Unarmed Strike against that creature. The attack occurs right before it leaves your reach.
 
 ### Mounted Combat
-
-
-Astride a giant seahorse, a  
-paladin adventures underwater
 
 A willing creature that is at least one size larger than a rider and that has an appropriate anatomy can serve as a mount, using the following rules.
 

@@ -20,11 +20,12 @@ Each framework must serve the frontend chat interface that displays the conversa
 ### Shared Infrastructure
 
 - **Frontend:** Single-page `index.html`, shared across all agents.
-- **Communication:** HTTP + SSE. Two endpoints per agent: one for chat, one for the character sheet.
+- **Communication:** HTTP + SSE. Two endpoints per agent: one for the index.html and one for chat and the character sheet via POST + SSE.
 - **LLM Backend:** All frameworks communicate with models via the LiteLLM Python SDK, making them equally model-agnostic.
 
 ## The Frameworks
 
+- No framework
 - OpenAI Agents SDK
 - Anthropic Agent SDK (Claude)
 - Google ADK

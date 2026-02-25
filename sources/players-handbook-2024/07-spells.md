@@ -1,9 +1,5 @@
 # Chapter 7: Spells
 
-
-Archmages of Greyhawk—Jallarzi, Mordenkainen, and Bigby—  
-prepare their magic as they open a gate to another plane
-
 This chapter gives rules for casting spells. It also includes descriptions of common spells in the worlds of Dungeons & Dragons. Those spells are used by many class features, magic items, and monsters.
 
 ## Gaining Spells
@@ -124,9 +120,6 @@ If a spell has movable effects, they aren’t restricted by its range unless the
 
 ### Components
 
-
-An aasimar Wizard uses a crystal material component to focus the magic of Cone of Cold
-
 A spell’s components are physical requirements the spellcaster must meet to cast the spell. Each spell’s description indicates whether it requires Verbal (V), Somatic (S), or Material (M) components. If the spellcaster can’t provide one or more of a spell’s components, the spellcaster can’t cast the spell.
 
 #### Verbal (V)
@@ -171,7 +164,6 @@ A typical spell requires the caster to pick one or more targets to be affected b
 
 **_Areas of Effect._** Some spells, such as Thunderwave, cover an area called an area of effect, which is defined in the rules glossary. The area determines what the spell targets. The description of a spell specifies whether it has an area of effect, which is typically one of these shapes: Cone, Cube, Cylinder, Emanation, Line, or Sphere.
 
-
 **_Awareness of Being Targeted._** Unless a spell has a perceptible effect, a creature doesn’t know it was targeted by the spell. An effect like lightning is obvious, but a more subtle effect, such as an attempt to read thoughts, goes unnoticed unless a spell’s description says otherwise.
 
 **_Invalid Targets._** If you cast a spell on someone or something that can’t be affected by it, nothing happens to that target, but if you used a spell slot to cast the spell, the slot is still expended.
@@ -197,7 +189,6 @@ The effects of different spells add together while their durations overlap. In c
 ### Identifying an Ongoing Spell
 
 You can try to identify a non-instantaneous spell by its observable effects if its duration is ongoing. To identify it, you must take the Study action and succeed on a DC 15 Intelligence (Arcana) check.
-
 
 # Spell Descriptions
 
