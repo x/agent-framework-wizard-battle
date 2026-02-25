@@ -1,0 +1,63 @@
+[project]
+name = "scaffolding"
+version = "0.1.0"
+requires-python = "==3.13.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.2",
+    "ty>=0.0.18",
+]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "A",      # Prevent builtins shadowing
+    "ANN",    # Require type annotations
+    "ASYNC",  # Good async rules
+    "B",      # Good common bug catching
+    "C4",     # Catch incorrect use of comprehensions, dict, list, etc
+    "C90",    # Reduce function complexity
+    "D",      # Require docstrings
+    "DTZ",    # No naive datetimes
+    "E",      # PyCodeStyle errors
+    "ERA",    # No commented out code
+    "F",      # Pyflakes rules
+    "FIX",    # FIXMEs and TODOs
+    "FURB",   # Modern python guidance
+    "I",      # Sort imports properly
+    "ICN",    # Use common import conventions
+    "ISC",    # Good use of string concatenation
+    "LOG",    # Require cood logging
+    "NPY",    # Some numpy-specific things
+    "PTH",    # Use pathlib instead of os.path
+    "RET",    # Good return practices
+    "SIM",    # Common simplification rules
+    "T20",    # No print statements
+    "TC",     # Enforce importing certain types in a TYPE_CHECKING block
+    "TID",    # Some good import practices
+    "TRY",    # Better exception handling
+    "UP",     # Warn if certain things can changed due to newer Python versions
+    "W",      # PyCodeStyle warnings
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "D",
+    "ANN",
+    "C90",
+    "T20",
+    "LOG",
+    "RET",
+    "TRY",
+    "FIX",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
