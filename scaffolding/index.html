@@ -74,11 +74,34 @@
         }
 
         .message.user .content { color: #555; font-style: italic; white-space: pre-wrap; }
+
         .message.assistant .content { line-height: 1.7; }
         .message.assistant .content p { margin-bottom: 0.5rem; }
         .message.assistant .content p:last-child { margin-bottom: 0; }
         .message.assistant .content ul,
         .message.assistant .content ol { margin: 0.3rem 0 0.5rem 1.2rem; }
+        .message.assistant .content li { margin-bottom: 0.15rem; }
+        .message.assistant .content strong { font-weight: 700; }
+        .message.assistant .content code {
+            background: #e8e5df; padding: 0.1rem 0.3rem; border-radius: 3px;
+            font-family: 'Courier New', monospace; font-size: 0.9em;
+        }
+        .message.assistant .content pre {
+            background: #e8e5df; padding: 0.5rem 0.7rem; border-radius: 4px;
+            overflow-x: auto; margin: 0.4rem 0;
+        }
+        .message.assistant .content pre code { background: none; padding: 0; }
+        .message.assistant .content h1,
+        .message.assistant .content h2,
+        .message.assistant .content h3 { font-size: 1em; font-weight: 700; margin: 0.6rem 0 0.3rem; }
+        .message.assistant .content hr { border: none; border-top: 1px solid #ccc; margin: 0.5rem 0; }
+        .message.assistant .content table { border-collapse: collapse; margin: 0.4rem 0; width: 100%; }
+        .message.assistant .content th,
+        .message.assistant .content td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; text-align: left; }
+        .message.assistant .content th { background: #e8e5df; font-weight: 700; }
+        .message.assistant .content blockquote {
+            border-left: 3px solid #ccc; padding-left: 0.7rem; margin: 0.4rem 0; color: #666;
+        }
 
         .thinking { color: #bbb; font-style: italic; }
 
