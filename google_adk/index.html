@@ -103,6 +103,19 @@
             border-left: 3px solid #ccc; padding-left: 0.7rem; margin: 0.4rem 0; color: #666;
         }
 
+        .meta-item {
+            font-size: 0.68rem;
+            font-family: 'Courier New', monospace;
+            padding: 0.1rem 0.35rem;
+            border-radius: 3px;
+            margin-bottom: 0.15rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .meta-tool_call { color: #999; background: #f0ede8; }
+        .meta-error { color: #b94040; background: #fdf2f1; }
+
         .thinking { color: #bbb; font-style: italic; }
 
         .input-area {
@@ -779,7 +792,12 @@
                             <div class="content" x-text="msg.content"></div>
                         </template>
                         <template x-if="msg.role === 'assistant'">
-                            <div class="content" x-html="renderMarkdown(msg.content)"></div>
+                            <div>
+                                <template x-for="(m, mi) in (msg.meta || [])" :key="mi">
+                                    <div :class="'meta-item meta-' + m.type" :title="m.text" x-text="m.text"></div>
+                                </template>
+                                <div class="content" x-html="renderMarkdown(msg.content)"></div>
+                            </div>
                         </template>
                     </div>
                 </template>
@@ -1175,7 +1193,7 @@
                     this.input = '';
                     this.loading = true;
 
-                    this.messages.push({role: 'assistant', content: ''});
+                    this.messages.push({role: 'assistant', content: '', meta: []});
                     const idx = this.messages.length - 1;
 
                     try {
@@ -1210,6 +1228,7 @@
                     const reader = body.getReader();
                     const decoder = new TextDecoder();
                     let buffer = '';
+                    let lastAuthor = null;
 
                     while (true) {
                         const {done, value} = await reader.read();
@@ -1220,25 +1239,61 @@
                         buffer = events.pop();
 
                         for (const raw of events) {
-                            let eventType = 'message';
                             let data = '';
                             for (const line of raw.split('\n')) {
-                                if (line.startsWith('event: '))      eventType = line.slice(7).trim();
-                                else if (line.startsWith('data: ')) data += line.slice(6);
+                                if (line.startsWith('data: ')) data += line.slice(6);
                             }
                             if (!data) continue;
 
-                            if (eventType === 'character_sheet') {
-                                try {
-                                    const sheet = JSON.parse(data);
-                                    for (const [k, v] of Object.entries(sheet)) this.c[k] = v;
-                                } catch (_) {}
-                            } else if (eventType === 'session') {
-                                this.sessionId = data.trim();
+                            let ev;
+                            try { ev = JSON.parse(data); } catch (_) { continue; }
+
+                            // First event is our custom session payload
+                            if (ev.sessionId) {
+                                this.sessionId = ev.sessionId;
                                 localStorage.setItem('session_id', this.sessionId);
-                            } else {
-                                try { this.messages[msgIdx].content += JSON.parse(data); } catch (_) { this.messages[msgIdx].content += data; }
-                                this.scrollToBottom();
+                                continue;
+                            }
+
+                            // Error payload
+                            if (ev.error) {
+                                this.messages[msgIdx].meta.push({type: 'error', text: `⚠ ${ev.error}`});
+                                continue;
+                            }
+
+                            // Agent transfer: insert separator when author changes
+                            if (ev.author && ev.author !== lastAuthor) {
+                                if (lastAuthor !== null) {
+                                    this.messages[msgIdx].content += '\n\n---\n\n';
+                                }
+                                lastAuthor = ev.author;
+                            }
+
+                            // Character sheet from state delta
+                            const sheet = ev.actions?.stateDelta?.sheet;
+                            if (sheet) {
+                                try {
+                                    const parsed = typeof sheet === 'string' ? JSON.parse(sheet) : sheet;
+                                    for (const [k, v] of Object.entries(parsed)) this.c[k] = v;
+                                } catch (_) {}
+                            }
+
+                            // Process content parts (skip partial events for non-text)
+                            for (const part of ev.content?.parts || []) {
+                                if (part.functionCall) {
+                                    const fc = part.functionCall;
+                                    const argStr = Object.entries(fc.args || {}).map(([k, v]) => {
+                                        const s = JSON.stringify(v);
+                                        return `${k}=${s.length > 50 ? s.slice(0, 50) + '…' : s}`;
+                                    }).join(', ');
+                                    this.messages[msgIdx].meta.push({type: 'tool_call', text: `⚙ ${fc.name}(${argStr})`});
+                                } else if (part.text) {
+                                    // Cumulative text — replace content after last agent separator
+                                    const sepIdx = this.messages[msgIdx].content.lastIndexOf('---\n\n');
+                                    const prefix = sepIdx >= 0 ? this.messages[msgIdx].content.slice(0, sepIdx + 5) : '';
+                                    this.messages[msgIdx].content = prefix + part.text;
+                                    this.scrollToBottom();
+                                }
                             }
                         }
                     }

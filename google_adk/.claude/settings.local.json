@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gcloud config:*)",
+      "Bash(gcloud projects:*)",
+      "Bash(gcloud:*)",
+      "WebFetch(domain:docs.litellm.ai)",
+      "Bash(head:*)"
+    ]
+  }
+}

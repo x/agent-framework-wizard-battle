@@ -26,3 +26,9 @@ env/
 
 # Playwright
 .playwright-cli/
+
+# Generated RAG index
+chroma_db/
+
+# Claude Code memory
+memory/
