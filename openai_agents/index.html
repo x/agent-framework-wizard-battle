@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Wizard Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-size: 14px; }
+
+        body {
+            font-family: 'Quattrocento', serif;
+            background: #F5F5F0;
+            color: #1a1a1a;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 0.6rem 1.5rem;
+            border-bottom: 1px solid #ccc;
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* ── Chat Pane ── */
+
+        .chat-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ccc;
+            overflow: hidden;
+            min-width: 250px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .messages::-webkit-scrollbar { width: 4px; }
+        .messages::-webkit-scrollbar-thumb { background: #ccc; }
+
+        .message .role {
+            font-size: 0.65rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #999;
+            margin-bottom: 0.2rem;
+        }
+
+        .message.user .content { color: #555; font-style: italic; white-space: pre-wrap; }
+
+        .message.assistant .content { line-height: 1.7; }
+        .message.assistant .content p { margin-bottom: 0.5rem; }
+        .message.assistant .content p:last-child { margin-bottom: 0; }
+        .message.assistant .content ul,
+        .message.assistant .content ol { margin: 0.3rem 0 0.5rem 1.2rem; }
+        .message.assistant .content li { margin-bottom: 0.15rem; }
+        .message.assistant .content strong { font-weight: 700; }
+        .message.assistant .content code {
+            background: #e8e5df; padding: 0.1rem 0.3rem; border-radius: 3px;
+            font-family: 'Courier New', monospace; font-size: 0.9em;
+        }
+        .message.assistant .content pre {
+            background: #e8e5df; padding: 0.5rem 0.7rem; border-radius: 4px;
+            overflow-x: auto; margin: 0.4rem 0;
+        }
+        .message.assistant .content pre code { background: none; padding: 0; }
+        .message.assistant .content h1,
+        .message.assistant .content h2,
+        .message.assistant .content h3 { font-size: 1em; font-weight: 700; margin: 0.6rem 0 0.3rem; }
+        .message.assistant .content hr { border: none; border-top: 1px solid #ccc; margin: 0.5rem 0; }
+        .message.assistant .content table { border-collapse: collapse; margin: 0.4rem 0; width: 100%; }
+        .message.assistant .content th,
+        .message.assistant .content td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; text-align: left; }
+        .message.assistant .content th { background: #e8e5df; font-weight: 700; }
+        .message.assistant .content blockquote {
+            border-left: 3px solid #ccc; padding-left: 0.7rem; margin: 0.4rem 0; color: #666;
+        }
+
+        .thinking { color: #bbb; font-style: italic; }
+
+        .input-area {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.7rem 1.5rem;
+            border-top: 1px solid #ccc;
+            flex-shrink: 0;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.45rem 0.6rem;
+            border: 1px solid #ccc;
+            background: white;
+            font-family: 'Quattrocento', serif;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="text"]:focus { border-color: #888; }
+        input[type="text"]::placeholder { color: #bbb; }
+        input[type="text"]:disabled { background: #f0f0ec; }
+
+        button {
+            padding: 0.45rem 0.9rem;
+            border: 1px solid #ccc;
+            background: white;
+            font-family: 'Quattrocento', serif;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover:not(:disabled) { background: #eaeae5; }
+        button:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-clear {
+            border-color: transparent;
+            background: transparent;
+            color: #aaa;
+            font-size: 12px;
+            padding: 0.45rem 0.4rem;
+        }
+
+        .btn-clear:hover:not(:disabled) { color: #c00; background: transparent; }
+
+        /* ── Sheet Pane ── */
+
+        .sheet-pane {
+            flex: none;
+            overflow: auto;
+            padding: 10px;
+            min-width: 0;
+        }
+
+        .sheet-pane::-webkit-scrollbar { width: 4px; }
+        .sheet-pane::-webkit-scrollbar-thumb { background: #ccc; }
+
+        /* ── Sheet Header ── */
+
+        .sheet-header {
+            display: flex;
+            gap: 0;
+            margin-bottom: 10px;
+        }
+
+        .char-name-box {
+            flex: 0 0 30%;
+            background: #eee;
+            border: 1px solid black;
+            border-radius: 10px 0 0 10px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .char-name-box .val {
+            font-size: 1.15rem;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+
+        .char-name-box .lbl {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #555;
+        }
+
+        .char-misc-box {
+            flex: 1;
+            border: 1px solid black;
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+            padding: 6px 10px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px 14px;
+        }
+
+        .misc-field {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-width: 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 2px;
+        }
+
+        .misc-field .val {
+            font-size: 0.82rem;
+            font-weight: normal;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .misc-field .lbl {
+            font-size: 0.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #777;
+        }
+
+        /* ── Three Column Body ── */
+
+        .sheet-body {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .col1 {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            min-width: 0;
+        }
+
+        .col2 { flex: none; width: 300px; min-width: 0; }
+        .col3 { flex: 0 0 190px; min-width: 0; }
+
+        /* ── Shared Section Styles ── */
+
+        .section-bordered {
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: center;
+            margin-top: 4px;
+            color: #333;
+        }
+
+        .section-title-top {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: center;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        /* ── Column 1: Ability Scores Strip ── */
+
+        .abilities-strip {
+            background: #bbb;
+            border-radius: 10px;
+            padding: 8px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+            width: 101px;
+        }
+
+        .ability-box {
+            background: white;
+            border: 1px solid black;
+            border-radius: 10px;
+            width: 80px;
+            height: 85px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding-top: 6px;
+        }
+
+        .ability-box .ab-label {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #555;
+        }
+
+        .ability-box .ab-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        .ability-box .ab-mod {
+            position: absolute;
+            bottom: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid black;
+            border-radius: 20px;
+            width: 34px;
+            height: 22px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        /* ── Column 1: Saves/Skills Area ── */
+
+        .saves-skills-area {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        /* ── Proficiency Bonus ── */
+
+        .prof-bonus-box {
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prof-bonus-box .val {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .prof-bonus-box .lbl {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+        }
+
+        /* ── Saving Throws & Skills ── */
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 1.5px 0;
+            font-size: 0.75rem;
+        }
+
+        .prof-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1.5px solid black;
+            flex-shrink: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: default;
+            padding: 0;
+            background: white;
+        }
+
+        .prof-dot.filled {
+            background: black;
+        }
+
+        .stat-row .bonus {
+            font-weight: bold;
+            min-width: 22px;
+            text-align: right;
+            font-size: 0.75rem;
+        }
+
+        .stat-row .sname {
+            flex: 1;
+            font-size: 0.75rem;
+        }
+
+        .stat-row .sabil {
+            color: #aaa;
+            font-size: 0.62rem;
+        }
+
+        /* ── Column 2: Combat Section ── */
+
+        .combat-top-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .combat-stat-box {
+            background: white;
+            border: 1px solid black;
+            border-radius: 10px;
+            width: 90px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .combat-stat-box .val {
+            font-size: 1.6rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .combat-stat-box .lbl {
+            font-size: 0.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        /* HP stacked vertically like reference */
+
+        .hp-max-line {
+            border: 1px solid black;
+            border-radius: 10px 10px 0 0;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .hp-max-line .lbl {
+            font-size: 0.6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        .hp-max-line .val {
+            font-size: 1rem;
+            font-weight: bold;
+            border-bottom: 1px solid #999;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .hp-current-box {
+            border: 1px solid black;
+            border-top: none;
+            padding: 16px 10px 6px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .hp-current-box .val {
+            font-size: 1.4rem;
+            font-weight: bold;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .hp-current-box .lbl {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+        }
+
+        .hp-temp-box {
+            border: 1px solid black;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 10px 10px 6px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .hp-temp-box .lbl {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+        }
+
+        /* Hit Dice + Death Saves side by side */
+
+        .hitdice-death-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .hitdice-box {
+            flex: 1;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .hitdice-box .top-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .hitdice-box .top-line .lbl {
+            font-size: 0.55rem;
+            color: #555;
+        }
+
+        .hitdice-box .top-line .val {
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-bottom: 1px solid #999;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .hitdice-box .section-title { margin-top: 2px; }
+
+        .deathsave-box {
+            flex: 1;
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 6px 8px;
+            text-align: center;
+        }
+
+        .ds-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 2px 0;
+        }
+
+        .ds-group .ds-label {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #888;
+            min-width: 14px;
+            text-align: right;
+        }
+
+        .ds-bubble {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            border: 1.5px solid #888;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 0;
+        }
+
+        .ds-bubble:checked {
+            background: black;
+            border-color: black;
+        }
+
+        /* ── Attacks & Spellcasting Section ── */
+
+        .atk-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .atk-table th {
+            text-align: left;
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #888;
+            border-bottom: 1px solid #ccc;
+            padding: 0 4px 2px;
+        }
+
+        .atk-table td {
+            padding: 2px 4px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .empty-cell { color: #bbb; font-style: italic; font-size: 0.75rem; }
+
+        .spell-stat-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .spell-stat-mini {
+            flex: 1;
+            border: 1px solid black;
+            border-radius: 10px;
+            text-align: center;
+            padding: 4px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .spell-stat-mini .val {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .spell-stat-mini .lbl {
+            font-size: 0.48rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        .spell-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.75rem;
+            padding: 1px 2px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spell-lv { color: #aaa; font-size: 0.62rem; }
+
+        .sub-label {
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #555;
+            margin: 8px 0 2px;
+        }
+
+        /* ── Column 3: Personality / Features / Equipment ── */
+
+        .flavor-section {
+            margin-bottom: 8px;
+        }
+
+        .flavor-box {
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 8px 10px 4px;
+            margin-bottom: 8px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .flavor-box .val {
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #333;
+            flex: 1;
+        }
+
+        .flavor-box .lbl {
+            font-size: 0.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #777;
+            border-top: 1px solid #ddd;
+            margin-top: 4px;
+            padding-top: 3px;
+        }
+
+        .feat-item {
+            font-size: 0.78rem;
+            padding: 2px 2px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .equip-item {
+            font-size: 0.78rem;
+            padding: 2px 2px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gold-line {
+            font-size: 0.78rem;
+            font-weight: bold;
+            margin-top: 4px;
+            padding: 2px;
+        }
+
+        /* ── Responsive ── */
+
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            .chat-pane { flex: none; height: 45vh; border-right: none; border-bottom: 1px solid #ccc; }
+            .sheet-pane { flex: none; height: 55vh; }
+            .sheet-body { flex-direction: column; }
+            .col1 { width: 100%; }
+            .col2, .col3 { flex: none; width: 100%; }
+            .combat-top-row { justify-content: flex-start; }
+            .combat-stat-box { width: 80px; height: 70px; }
+            .sheet-header { flex-direction: column; }
+            .char-name-box { flex: none; border-radius: 10px 10px 0 0; }
+            .char-misc-box { border-left: 1px solid black; border-radius: 0 0 10px 10px; }
+        }
+
+        @media (max-width: 520px) {
+            .col1 { flex-direction: column; }
+            .abilities-strip { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; gap: 14px 10px; padding: 8px; }
+            .saves-skills-area { min-width: 0; width: 100%; }
+            .char-misc-box { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body x-data="app()">
+
+    <header>
+        <h1>D&amp;D 5e (2024) Wizard Builder</h1>
+    </header>
+
+    <div class="layout">
+
+        <!-- ─── Chat Pane ─── -->
+        <div class="chat-pane">
+            <div class="messages" x-ref="messages">
+                <template x-for="(msg, i) in messages" :key="i">
+                    <div :class="'message ' + msg.role">
+                        <div class="role" x-text="msg.role === 'user' ? 'You' : 'Guide'"></div>
+                        <template x-if="msg.role === 'user'">
+                            <div class="content" x-text="msg.content"></div>
+                        </template>
+                        <template x-if="msg.role === 'assistant'">
+                            <div class="content" x-html="renderMarkdown(msg.content)"></div>
+                        </template>
+                    </div>
+                </template>
+                <div x-show="loading" class="thinking">The wizard stirs...</div>
+            </div>
+            <div class="input-area">
+                <input
+                    type="text"
+                    x-model="input"
+                    @keydown.enter="sendMessage"
+                    placeholder="Speak, traveler..."
+                    :disabled="loading"
+                    autofocus
+                    x-ref="chatInput"
+                >
+                <button @click="sendMessage" :disabled="loading">Send</button>
+                <button class="btn-clear" @click="clearChat">Clear</button>
+            </div>
+        </div>
+
+        <!-- ─── Character Sheet Pane ─── -->
+        <div class="sheet-pane">
+
+            <!-- Sheet Header -->
+            <div class="sheet-header">
+                <div class="char-name-box">
+                    <div class="val" x-text="c.name || 'Unnamed Wizard'"></div>
+                    <div class="lbl">Character Name</div>
+                </div>
+                <div class="char-misc-box">
+                    <div class="misc-field">
+                        <div class="val">Wizard 1</div>
+                        <div class="lbl">Class & Level</div>
+                    </div>
+                    <div class="misc-field">
+                        <div class="val" x-text="c.background || '—'"></div>
+                        <div class="lbl">Background</div>
+                    </div>
+                    <div class="misc-field">
+                        <div class="val" x-text="c.race || '—'"></div>
+                        <div class="lbl">Race</div>
+                    </div>
+                    <div class="misc-field">
+                        <div class="val" x-text="c.alignment || '—'"></div>
+                        <div class="lbl">Alignment</div>
+                    </div>
+                    <div class="misc-field">
+                        <div class="val">0</div>
+                        <div class="lbl">Experience Points</div>
+                    </div>
+                    <div class="misc-field">
+                        <div class="val">—</div>
+                        <div class="lbl">Player Name</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Three-Column Body -->
+            <div class="sheet-body">
+
+                <!-- ═══ Column 1: Abilities strip + Saves/Skills area ═══ -->
+                <div class="col1">
+
+                    <!-- Narrow Ability Scores Strip -->
+                    <div class="abilities-strip">
+                        <template x-for="s in ['str','dex','con','int','wis','cha']">
+                            <div class="ability-box">
+                                <div class="ab-label" x-text="s.toUpperCase()"></div>
+                                <div class="ab-score" x-text="c[s] ?? '—'"></div>
+                                <div class="ab-mod" x-text="modStr(c[s])"></div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Saves + Skills Area (to the right of abilities) -->
+                    <div class="saves-skills-area">
+
+                        <!-- Proficiency Bonus -->
+                        <div class="prof-bonus-box">
+                            <div class="val">+2</div>
+                            <div class="lbl">Proficiency Bonus</div>
+                        </div>
+
+                        <!-- Saving Throws -->
+                        <div class="section-bordered">
+                            <template x-for="s in ['str','dex','con','int','wis','cha']">
+                                <div class="stat-row">
+                                    <span class="prof-dot" :class="(c.save_profs||[]).includes(s) ? 'filled' : ''"></span>
+                                    <span class="bonus" x-text="saveBonus(s)"></span>
+                                    <span class="sname" x-text="saveNames[s]"></span>
+                                </div>
+                            </template>
+                            <div class="section-title">Saving Throws</div>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="section-bordered">
+                            <template x-for="sk in allSkills">
+                                <div class="stat-row">
+                                    <span class="prof-dot" :class="(c.skill_profs||[]).includes(sk.key) ? 'filled' : ''"></span>
+                                    <span class="bonus" x-text="skillBonus(sk)"></span>
+                                    <span class="sname" x-text="sk.name"></span>
+                                    <span class="sabil" x-text="'(' + sk.ability.toUpperCase() + ')'"></span>
+                                </div>
+                            </template>
+                            <div class="section-title">Skills</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ═══ Column 2: Combat + Attacks/Spellcasting ═══ -->
+                <div class="col2">
+
+                    <!-- AC / Initiative / Speed -->
+                    <div class="combat-top-row">
+                        <div class="combat-stat-box">
+                            <div class="val" x-text="c.ac ?? '—'"></div>
+                            <div class="lbl">Armor Class</div>
+                        </div>
+                        <div class="combat-stat-box">
+                            <div class="val" x-text="modStr(c.dex)"></div>
+                            <div class="lbl">Initiative</div>
+                        </div>
+                        <div class="combat-stat-box">
+                            <div class="val" x-text="(c.speed ?? 30) + ' ft'"></div>
+                            <div class="lbl">Speed</div>
+                        </div>
+                    </div>
+
+                    <!-- HP: stacked vertically -->
+                    <div class="hp-max-line">
+                        <span class="lbl">Hit Point Maximum</span>
+                        <span class="val" x-text="c.hp_max ?? '—'"></span>
+                    </div>
+                    <div class="hp-current-box">
+                        <div class="val" x-text="c.hp_max ?? '—'"></div>
+                        <div class="lbl">Current Hit Points</div>
+                    </div>
+                    <div class="hp-temp-box">
+                        <div class="lbl">Temporary Hit Points</div>
+                    </div>
+
+                    <!-- Hit Dice + Death Saves -->
+                    <div class="hitdice-death-row">
+                        <div class="hitdice-box">
+                            <div class="top-line">
+                                <span class="lbl">Total</span>
+                                <span class="val">2d10</span>
+                            </div>
+                            <div class="section-title">Hit Dice</div>
+                        </div>
+                        <div class="deathsave-box">
+                            <div class="ds-group">
+                                <span class="ds-label">Successes</span>
+                                <input type="checkbox" class="ds-bubble">
+                                <input type="checkbox" class="ds-bubble">
+                                <input type="checkbox" class="ds-bubble">
+                            </div>
+                            <div class="ds-group">
+                                <span class="ds-label">Failures</span>
+                                <input type="checkbox" class="ds-bubble">
+                                <input type="checkbox" class="ds-bubble">
+                                <input type="checkbox" class="ds-bubble">
+                            </div>
+                            <div class="section-title">Death Saves</div>
+                        </div>
+                    </div>
+
+                    <!-- Attacks & Spellcasting -->
+                    <div class="section-bordered">
+                        <div class="section-title-top">Attacks & Spellcasting</div>
+
+                        <div class="sub-label">Cantrips</div>
+                        <table class="atk-table">
+                            <thead>
+                                <tr><th>Name</th><th>Hit / Save</th><th>Damage</th></tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(atk, i) in c.cantrips" :key="i">
+                                    <tr>
+                                        <td x-text="atk.name"></td>
+                                        <td x-text="atk.hit || '—'"></td>
+                                        <td x-text="atk.damage || '—'"></td>
+                                    </tr>
+                                </template>
+                                <tr x-show="!c.cantrips.length">
+                                    <td colspan="3" class="empty-cell">None yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="sub-label">Weapons</div>
+                        <table class="atk-table">
+                            <thead>
+                                <tr><th>Weapon</th><th>Hit</th><th>Damage</th></tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(atk, i) in c.attacks" :key="i">
+                                    <tr>
+                                        <td x-text="atk.name"></td>
+                                        <td x-text="atk.hit"></td>
+                                        <td x-text="atk.damage"></td>
+                                    </tr>
+                                </template>
+                                <tr x-show="!c.attacks.length">
+                                    <td colspan="3" class="empty-cell">None yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="sub-label">Spellcasting</div>
+                        <div class="spell-stat-row">
+                            <div class="spell-stat-mini">
+                                <div class="val" x-text="spellSaveDC() ?? '—'"></div>
+                                <div class="lbl">Save DC</div>
+                            </div>
+                            <div class="spell-stat-mini">
+                                <div class="val" x-text="spellAtkBonus() ?? '—'"></div>
+                                <div class="lbl">Atk Bonus</div>
+                            </div>
+                            <div class="spell-stat-mini">
+                                <div class="val">INT</div>
+                                <div class="lbl">Ability</div>
+                            </div>
+                        </div>
+
+                        <div class="sub-label">Spells</div>
+                        <div>
+                            <template x-for="(sp, i) in c.spells" :key="i">
+                                <div class="spell-item">
+                                    <span x-text="sp.name"></span>
+                                    <span class="spell-lv" x-text="(sp.level === 0 ? 'C' : '1st') + (sp.ritual ? ' R' : '')"></span>
+                                </div>
+                            </template>
+                            <div x-show="!c.spells.length" class="empty-cell" style="padding:2px;">No spells yet</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ═══ Column 3: Personality + Features + Equipment ═══ -->
+                <div class="col3">
+
+                    <!-- Flavor Boxes -->
+                    <div class="flavor-section">
+                        <div class="flavor-box">
+                            <div class="val" x-text="c.personality || ''"></div>
+                            <div class="lbl">Personality</div>
+                        </div>
+                        <div class="flavor-box">
+                            <div class="val" x-text="c.ideals || ''"></div>
+                            <div class="lbl">Ideals</div>
+                        </div>
+                        <div class="flavor-box">
+                            <div class="val" x-text="c.bonds || ''"></div>
+                            <div class="lbl">Bonds</div>
+                        </div>
+                        <div class="flavor-box">
+                            <div class="val" x-text="c.flaws || ''"></div>
+                            <div class="lbl">Flaws</div>
+                        </div>
+                    </div>
+
+                    <!-- Features & Traits -->
+                    <div class="section-bordered">
+                        <template x-for="(f, i) in c.features" :key="i">
+                            <div class="feat-item" x-text="f"></div>
+                        </template>
+                        <div x-show="!c.features.length" class="empty-cell" style="padding:2px;">No features yet</div>
+                        <div class="section-title">Features & Traits</div>
+                    </div>
+
+                    <!-- Equipment -->
+                    <div class="section-bordered">
+                        <template x-for="(item, i) in c.equipment" :key="i">
+                            <div class="equip-item" x-text="item"></div>
+                        </template>
+                        <div x-show="!c.equipment.length" class="empty-cell" style="padding:2px;">No equipment yet</div>
+                        <div class="gold-line" x-show="c.gp > 0" x-text="c.gp + ' gp'"></div>
+                        <div class="section-title">Equipment</div>
+                    </div>
+
+                </div>
+
+            </div><!-- .sheet-body -->
+
+        </div><!-- .sheet-pane -->
+
+    </div><!-- .layout -->
+
+    <script>
+        const EMPTY_CHARACTER = {
+            name: null, race: null, background: null, alignment: null,
+            str: null, dex: null, con: null, int: null, wis: null, cha: null,
+            ac: null, speed: 30, hp_max: null,
+            save_profs: [],
+            skill_profs: [],
+            cantrips: [],
+            spells: [],
+            attacks: [],
+            features: [],
+            personality: null, ideals: null, bonds: null, flaws: null,
+            equipment: [],
+            gp: 0,
+        };
+
+        function app() {
+            return {
+                messages: [],
+                input: '',
+                loading: false,
+                sessionId: localStorage.getItem('session_id'),
+
+                c: {...EMPTY_CHARACTER},
+
+                saveNames: {
+                    str: 'Strength', dex: 'Dexterity', con: 'Constitution',
+                    int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma',
+                },
+
+                allSkills: [
+                    {key:'acrobatics',      name:'Acrobatics',      ability:'dex'},
+                    {key:'animal_handling', name:'Animal Handling',  ability:'wis'},
+                    {key:'arcana',          name:'Arcana',           ability:'int'},
+                    {key:'athletics',       name:'Athletics',        ability:'str'},
+                    {key:'deception',       name:'Deception',        ability:'cha'},
+                    {key:'history',         name:'History',          ability:'int'},
+                    {key:'insight',         name:'Insight',          ability:'wis'},
+                    {key:'intimidation',    name:'Intimidation',     ability:'cha'},
+                    {key:'investigation',   name:'Investigation',    ability:'int'},
+                    {key:'medicine',        name:'Medicine',         ability:'wis'},
+                    {key:'nature',          name:'Nature',           ability:'int'},
+                    {key:'perception',      name:'Perception',       ability:'wis'},
+                    {key:'performance',     name:'Performance',      ability:'cha'},
+                    {key:'persuasion',      name:'Persuasion',       ability:'cha'},
+                    {key:'religion',        name:'Religion',         ability:'int'},
+                    {key:'sleight_of_hand', name:'Sleight of Hand',  ability:'dex'},
+                    {key:'stealth',         name:'Stealth',          ability:'dex'},
+                    {key:'survival',        name:'Survival',         ability:'wis'},
+                ],
+
+                mod(score) {
+                    if (score == null) return null;
+                    return Math.floor((score - 10) / 2);
+                },
+
+                modStr(score) {
+                    const m = this.mod(score);
+                    if (m === null) return '—';
+                    return (m >= 0 ? '+' : '') + m;
+                },
+
+                saveBonus(stat) {
+                    const m = this.mod(this.c[stat]);
+                    if (m === null) return '—';
+                    const prof = (this.c.save_profs || []).includes(stat);
+                    const total = m + (prof ? 2 : 0);
+                    return (total >= 0 ? '+' : '') + total;
+                },
+
+                skillBonus(skill) {
+                    const m = this.mod(this.c[skill.ability]);
+                    if (m === null) return '—';
+                    const prof = (this.c.skill_profs || []).includes(skill.key);
+                    const total = m + (prof ? 2 : 0);
+                    return (total >= 0 ? '+' : '') + total;
+                },
+
+                spellSaveDC() {
+                    const m = this.mod(this.c.int);
+                    if (m === null) return null;
+                    return 8 + 2 + m;
+                },
+
+                spellAtkBonus() {
+                    const m = this.mod(this.c.int);
+                    if (m === null) return null;
+                    const total = 2 + m;
+                    return (total >= 0 ? '+' : '') + total;
+                },
+
+                renderMarkdown(content) {
+                    return marked.parse(content);
+                },
+
+                async sendMessage() {
+                    const message = this.input.trim();
+                    if (!message || this.loading) return;
+
+                    this.messages.push({role: 'user', content: message});
+                    this.input = '';
+                    this.loading = true;
+
+                    this.messages.push({role: 'assistant', content: ''});
+                    const idx = this.messages.length - 1;
+
+                    try {
+                        const res = await fetch('/chat', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({message, session_id: this.sessionId}),
+                        });
+                        if (!res.ok) throw new Error('bad response');
+
+                        const ct = res.headers.get('content-type') || '';
+                        if (ct.includes('text/event-stream')) {
+                            await this.readStream(res.body, idx);
+                        } else {
+                            const data = await res.json();
+                            if (data.session_id) {
+                                this.sessionId = data.session_id;
+                                localStorage.setItem('session_id', this.sessionId);
+                            }
+                            this.messages[idx].content = data.response;
+                        }
+                    } catch (_) {
+                        this.messages[idx].content = 'The spell fizzles... something went wrong.';
+                    }
+
+                    this.loading = false;
+                    this.scrollToBottom();
+                    this.$nextTick(() => this.$refs.chatInput.focus());
+                },
+
+                async readStream(body, msgIdx) {
+                    const reader = body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+
+                    while (true) {
+                        const {done, value} = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, {stream: true});
+                        const events = buffer.split('\n\n');
+                        buffer = events.pop();
+
+                        for (const raw of events) {
+                            let eventType = 'message';
+                            let data = '';
+                            for (const line of raw.split('\n')) {
+                                if (line.startsWith('event: '))      eventType = line.slice(7).trim();
+                                else if (line.startsWith('data: ')) data += line.slice(6);
+                            }
+                            if (!data) continue;
+
+                            if (eventType === 'character_sheet') {
+                                try {
+                                    const sheet = JSON.parse(data);
+                                    for (const [k, v] of Object.entries(sheet)) this.c[k] = v;
+                                } catch (_) {}
+                            } else if (eventType === 'session') {
+                                this.sessionId = data.trim();
+                                localStorage.setItem('session_id', this.sessionId);
+                            } else {
+                                try { this.messages[msgIdx].content += JSON.parse(data); } catch (_) { this.messages[msgIdx].content += data; }
+                                this.scrollToBottom();
+                            }
+                        }
+                    }
+                },
+
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const el = this.$refs.messages;
+                        el.scrollTop = el.scrollHeight;
+                    });
+                },
+
+                clearChat() {
+                    if (this.sessionId) {
+                        fetch('/clear', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({session_id: this.sessionId}),
+                        }).catch(() => {});
+                    }
+                    this.sessionId = null;
+                    localStorage.removeItem('session_id');
+                    this.messages = [];
+                    this.c = {...EMPTY_CHARACTER, save_profs: [], skill_profs: [], cantrips: [], spells: [], attacks: [], features: [], equipment: []};
+                },
+            };
+        }
+    </script>
+
+</body>
+</html>
