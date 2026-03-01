@@ -28,7 +28,7 @@ from google.genai.types import Content, Part
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ValidationError
 
-from models import CharacterSheet
+from models import CantripEntry, CharacterSheet, Spell, SpellSchool
 
 load_dotenv()
 
@@ -306,11 +306,12 @@ def finalize_spells(
         }
 
     prof = 2
-    sm.sheet.cantrips = cantrip_names
-    sm.sheet.spells = prepared_spell_names
+    spell_atk = f"+{int_mod + prof}"
+    sm.sheet.cantrips = [CantripEntry(name=n, hit=spell_atk) for n in cantrip_names]
+    sm.sheet.spells = [Spell(name=n, level=1, school=SpellSchool.EVOCATION) for n in prepared_spell_names]
     sm.mark_step_done()
     sm.save()
-    return {"status": "ok", "spell_attack": f"+{int_mod + prof}", "spell_dc": 8 + int_mod + prof}
+    return {"status": "ok", "spell_attack": spell_atk, "spell_dc": 8 + int_mod + prof}
 
 
 def finalize_equipment(equipment: list[str], gp: int, tool_context: ToolContext) -> dict[str, object]:

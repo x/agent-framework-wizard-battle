@@ -313,8 +313,8 @@ class CharacterSheet(BaseModel):
     save_profs: list[str] = Field(default_factory=list)
     skill_profs: list[str] = Field(default_factory=list)
 
-    cantrips: list[str] = Field(default_factory=list)
-    spells: list[str] = Field(default_factory=list)
+    cantrips: list[CantripEntry] = Field(default_factory=list)
+    spells: list[Spell] = Field(default_factory=list)
 
     attacks: list[dict[str, str]] = Field(default_factory=list)
     features: list[str] = Field(default_factory=list)
