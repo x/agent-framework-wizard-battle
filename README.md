@@ -25,10 +25,10 @@ Each framework must serve the frontend chat interface that displays the conversa
 
 ## The Frameworks
 
-- No framework
-- OpenAI Agents SDK
-- Anthropic Agent SDK (Claude)
-- Google ADK
-- LangGraph
-- CrewAI
-- PydanticAI
+- [ ] No framework
+- [ ] OpenAI Agents SDK
+- [ ] Anthropic Agent SDK (Claude)
+- [x] Google ADK
+- [ ] LangGraph
+- [ ] CrewAI
+- [ ] PydanticAI
